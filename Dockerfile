@@ -11,15 +11,11 @@ COPY . .
 
 RUN npm run build
 
-# Stage 2: Serve the application using a lightweight server
-FROM node:16-alpine
+# Stage 2: Serve the application using Nginx
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy the built files from the build stage
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy only the necessary files from the build stage
-COPY --from=build /app/build ./build
-COPY package*.json ./
-
-RUN npm install --only=production
-
-CMD ["npm", "start"]
+# Expose port 80
+EXPOSE 80
