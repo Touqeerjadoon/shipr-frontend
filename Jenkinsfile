@@ -53,13 +53,13 @@ pipeline {
     post {
         success {
             slackSend(
-                channel: '#jenkins', // Replace with your Slack channel
+                channel: '#jenkins',
                 message: "✅ Pipeline SUCCESSFUL: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\nBranch: ${params.BRANCH}\nVersion: ${params.SEMANTIC_VERSION}\nMore info: ${env.BUILD_URL}"
             )
         }
         failure {
             slackSend(
-                channel: '#jenkins', // Replace with your Slack channel
+                channel: '#jenkins',
                 message: "❌ Pipeline FAILED: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\nBranch: ${params.BRANCH}\nVersion: ${params.SEMANTIC_VERSION}\nMore info: ${env.BUILD_URL}"
             )
         }
