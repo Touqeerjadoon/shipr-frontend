@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'touqeerjadoon55/shipr-frontend'
+        DOCKER_IMAGE = 'touqeerjadoon55/frontend-shiprapp'
     }
     parameters {
         gitParameter(
