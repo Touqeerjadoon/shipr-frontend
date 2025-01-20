@@ -27,7 +27,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh "docker build --no-cache -t ${env.DOCKER_IMAGE}:${params.SEMANTIC_VERSION} ."
+                sh "docker build -t ${env.DOCKER_IMAGE}:${params.SEMANTIC_VERSION} ."
             }
         }
         stage('Push Docker Image') {
