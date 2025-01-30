@@ -4,12 +4,6 @@ pipeline {
         DOCKER_IMAGE = 'touqeerjadoon55/frontend-shiprapp'
     }
     parameters {
-        gitParameter(
-            name: 'BRANCH',
-            type: 'PT_BRANCH',
-            branchFilter: 'origin/(.*)', 
-            selectedValue: 'DEFAULT'
-        )
         string(
             name: 'SEMANTIC_VERSION',
             defaultValue: '1.0.0',
@@ -20,22 +14,15 @@ pipeline {
         stage('Branch Validation') {
             steps {
                 script {
-                    // Check if the branch selected is 'develop', else abort the build
-                    if (params.BRANCH != 'develop') {
-                        error "Only 'develop' branch can be used. Aborting the build."
-                    }
+                    // Force 'develop' branch for 'developer' user
+                    def selectedBranch = 'develop'
+                    echo "Running pipeline on branch: ${selectedBranch}"
                 }
             }
         }
         stage('Checkout') {
             steps {
-                script {
-                    // Force 'develop' branch for 'developer' user
-                    if (env.USER_NAME == 'developer') {
-                        params.BRANCH = 'develop'
-                    }
-                }
-                git branch: "${params.BRANCH}",
+                git branch: 'develop',  // Hardcoded to 'develop'
                     credentialsId: '240a9f71-d6eb-4bee-af7b-1b6e106f2d18',
                     url: 'https://github.com/Touqeerjadoon/shipr-frontend.git'
             }
@@ -69,13 +56,13 @@ pipeline {
         success {
             slackSend(
                 channel: '#jenkins',
-                message: "✅ Pipeline SUCCESSFUL: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\nBranch: ${params.BRANCH}\nVersion: ${params.SEMANTIC_VERSION}\nTriggered by: ${currentBuild.getBuildCauses()[0]?.userName ?: 'Unknown User'}\nMore info: ${env.BUILD_URL}"
+                message: "✅ Pipeline SUCCESSFUL: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\nBranch: develop\nVersion: ${params.SEMANTIC_VERSION}\nTriggered by: ${currentBuild.getBuildCauses()[0]?.userName ?: 'Unknown User'}\nMore info: ${env.BUILD_URL}"
             )
         }
         failure {
             slackSend(
                 channel: '#jenkins',
-                message: "❌ Pipeline FAILED: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\nBranch: ${params.BRANCH}\nVersion: ${params.SEMANTIC_VERSION}\nTriggered by: ${currentBuild.getBuildCauses()[0]?.userName ?: 'Unknown User'}\nMore info: ${env.BUILD_URL}"
+                message: "❌ Pipeline FAILED: ${env.JOB_NAME} - ${env.BUILD_NUMBER}\nBranch: develop\nVersion: ${params.SEMANTIC_VERSION}\nTriggered by: ${currentBuild.getBuildCauses()[0]?.userName ?: 'Unknown User'}\nMore info: ${env.BUILD_URL}"
             )
         }
     }
