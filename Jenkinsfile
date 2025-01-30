@@ -4,25 +4,28 @@ pipeline {
         DOCKER_IMAGE = 'touqeerjadoon55/frontend-shiprapp'
     }
     parameters {
-        choice(
+        gitParameter(
             name: 'BRANCH',
-            choices: ['develop'], // Default choice for all users
-            description: 'Select the branch to build.'
+            type: 'PT_BRANCH',
+            branchFilter: 'origin/(.*)', 
+            selectedValue: 'DEFAULT'
+        )
+        string(
+            name: 'SEMANTIC_VERSION',
+            defaultValue: '1.0.0',
+            description: 'Enter the semantic version (e.g., 1.0.0) for the Docker image tag.'
         )
     }
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    // Dynamically set the branch based on the user
-                    if (env.USER_NAME == 'dev') {
+                if (env.USER_NAME == 'developer') {
                         BRANCH = 'develop' // Force 'develop' for the 'dev' user
                     }
-                    git branch: "${BRANCH}",
+                    git branch: "${params.BRANCH}",
                         credentialsId: '240a9f71-d6eb-4bee-af7b-1b6e106f2d18',
                         url: 'https://github.com/Touqeerjadoon/shipr-frontend.git'
                 }
-            }
         }
         stage('Build Docker Image') {
             steps {
