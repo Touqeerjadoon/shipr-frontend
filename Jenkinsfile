@@ -17,15 +17,28 @@ pipeline {
         )
     }
     stages {
+        stage('Branch Validation') {
+            steps {
+                script {
+                    // Check if the branch selected is 'develop', else abort the build
+                    if (params.BRANCH != 'develop') {
+                        error "Only 'develop' branch can be used. Aborting the build."
+                    }
+                }
+            }
+        }
         stage('Checkout') {
             steps {
-                if (env.USER_NAME == 'developer') {
-                        BRANCH = 'develop' // Force 'develop' for the 'dev' user
+                script {
+                    // Force 'develop' branch for 'developer' user
+                    if (env.USER_NAME == 'developer') {
+                        params.BRANCH = 'develop'
                     }
-                    git branch: "${params.BRANCH}",
-                        credentialsId: '240a9f71-d6eb-4bee-af7b-1b6e106f2d18',
-                        url: 'https://github.com/Touqeerjadoon/shipr-frontend.git'
                 }
+                git branch: "${params.BRANCH}",
+                    credentialsId: '240a9f71-d6eb-4bee-af7b-1b6e106f2d18',
+                    url: 'https://github.com/Touqeerjadoon/shipr-frontend.git'
+            }
         }
         stage('Build Docker Image') {
             steps {
